@@ -2,4 +2,217 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
-return {}
+
+-- return {
+--   -- Existing plugin (nvim-ts-autotag)
+--   {
+--     'amitds1997/remote-nvim.nvim',
+--     version = '*',
+--     dependencies = {
+--       'nvim-lua/plenary.nvim',
+--       'MunifTanjim/nui.nvim',
+--       'nvim-telescope/telescope.nvim',
+--     },
+--     config = true,
+--   },
+--
+--   {
+--
+--     'windwp/nvim-ts-autotag',
+--     event = 'InsertEnter',
+--     config = function()
+--       require('nvim-ts-autotag').setup()
+--     end,
+--   },
+--
+--   {
+--     'rose-pine/neovim',
+--     name = 'rose-pine',
+--     config = function()
+--       require('rose-pine').setup {
+--         variant = 'main', -- Choose between 'auto', 'main', 'moon', or 'dawn'
+--         dark_variant = 'main', -- Choose the dark variant
+--         dim_inactive_windows = false,
+--         extend_background_behind_borders = true,
+--
+--         enable = {
+--           terminal = true,
+--           legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+--           migrations = true, -- Handle deprecated options automatically
+--         },
+--
+--         styles = {
+--           bold = true,
+--           italic = true,
+--           transparency = true, -- Enable transparency
+--         },
+--
+--         palette = {
+--           -- Override the background color
+--           base = '#000000', -- Set the base background to black
+--         },
+--
+--         highlight_groups = {
+--           Normal = { bg = '#000000' }, -- Set the main editor background to black
+--           NonText = { bg = '#000000' }, -- Adjust non-text areas to match
+--         },
+--       }
+--
+--       -- Apply the colorscheme
+--       vim.cmd.colorscheme 'rose-pine'
+--     end,
+--   },
+--
+--   {
+--     'sainnhe/everforest',
+--     priority = 1000,
+--     config = function()
+--       vim.g.everforest_background = 'soft' -- Options: 'hard', 'medium', 'soft'
+--       vim.g.everforest_transparent_background = 1
+--       vim.cmd.colorscheme 'everforest'
+--     end,
+--   },
+--
+--   {
+--     'NTBBloodbath/doom-one.nvim',
+--     priority = 1000,
+--     config = function()
+--       vim.g.doom_one_transparent_background = true
+--       vim.cmd.colorscheme 'doom-one'
+--     end,
+--   },
+--   {
+--     'sainnhe/gruvbox-material',
+--     priority = 1000,
+--     config = function()
+--       vim.g.gruvbox_material_background = 'soft' -- Options: 'hard', 'medium', 'soft'
+--       vim.g.gruvbox_material_transparent_background = 1
+--       vim.cmd.colorscheme 'gruvbox-material'
+--     end,
+--   },
+--   {
+--     'loctvl842/monokai-pro.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('monokai-pro').setup {
+--         transparent_background = true,
+--         filter = 'classic', -- Options: 'classic', 'octagon', 'pro', 'machine', 'ristretto', 'spectrum'
+--       }
+--       vim.cmd.colorscheme 'monokai-pro'
+--     end,
+--   },
+--
+--   {
+--     'Mofiqul/dracula.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('dracula').setup {
+--         transparent_bg = true, -- Transparent background
+--         italic_comment = true,
+--       }
+--       vim.cmd.colorscheme 'dracula'
+--     end,
+--   },
+--
+--   {
+--     'rebelot/kanagawa.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('kanagawa').setup {
+--         transparent = true,
+--         colors = {
+--           theme = {
+--             all = {
+--               ui = { bg = 'none' }, -- Transparent background
+--             },
+--           },
+--         },
+--       }
+--       vim.cmd.colorscheme 'kanagawa'
+--     end,
+--   },
+--
+--   {
+--     'sainnhe/edge',
+--     priority = 1000,
+--     config = function()
+--       vim.g.edge_style = 'aura' -- Options: 'default', 'aura', 'neon'
+--       vim.g.edge_enable_transparent_background = 1
+--       vim.cmd.colorscheme 'edge'
+--     end,
+--   },
+--   {
+--     'marko-cerovac/material.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('material').setup {
+--         contrast = {
+--           sidebars = true, -- Enable contrast for sidebars
+--           floating_windows = true, -- Enable contrast for floating windows
+--         },
+--         disable = {
+--           background = true, -- Transparent background
+--         },
+--       }
+--       vim.g.material_style = 'deep ocean' -- Options: 'darker', 'lighter', 'oceanic', 'deep ocean', 'palenight'
+--       vim.cmd.colorscheme 'material'
+--     end,
+--   },
+--
+--   -- Tokyo Night theme
+--   {
+--     'folke/tokyonight.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('tokyonight').setup {
+--         style = 'night', -- Options: 'storm', 'moon', 'night', 'day'
+--         transparent = true, -- Transparent background
+--         terminal_colors = true,
+--         styles = {
+--           sidebars = 'transparent', -- Sidebar transparency (e.g., NvimTree, Telescope)
+--           floats = 'transparent', -- Floating window transparency
+--         },
+--       }
+--     end,
+--   },
+--
+--   -- Catppuccin theme
+--   {
+--     'catppuccin/nvim',
+--     name = 'catppuccin',
+--     priority = 1000,
+--     config = function()
+--       require('catppuccin').setup {
+--         flavour = 'macchiato', -- Choose 'latte', 'frappe', 'macchiato', or 'mocha'
+--         transparent_background = true, -- Enable transparent background
+--       }
+--       vim.cmd.colorscheme 'catppuccin'
+--     end,
+--   },
+--
+--   -- Gruvbox theme
+--   {
+--     'ellisonleao/gruvbox.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('gruvbox').setup {
+--         undercurl = true,
+--         transparent_mode = true, -- Enable transparent background
+--         contrast = 'hard', -- Options: 'hard', 'soft'
+--       }
+--     end,
+--   },
+--
+--   -- Nightfox theme
+--   {
+--     'EdenEast/nightfox.nvim',
+--     priority = 1000,
+--     config = function()
+--       require('nightfox').setup {
+--         options = {
+--           transparent = true, -- Transparent background
+--         },
+--       }
+--     end,
+--   },
+-- }
