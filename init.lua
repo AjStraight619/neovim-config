@@ -111,6 +111,11 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+vim.opt.tabstop = 4 -- Display width of tab character
+vim.opt.shiftwidth = 4 -- Number of spaces used for indentation
+vim.opt.softtabstop = 4 -- Number of spaces a tab counts for while editing
+vim.opt.expandtab = true -- Use spaces instead of tabs
+
 vim.opt.cursorline = true
 vim.api.nvim_set_hl(0, 'CursorLine', { bg = 'NONE' })
 
@@ -158,19 +163,26 @@ vim.opt.inccommand = 'split'
 -- Show which line your cursor is on
 vim.opt.cursorline = true
 
+vim.opt.relativenumber = true
+
 vim.g.jsdoc_enable_shortcut = 1
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-vim.opt.expandtab = true -- Use spaces instead of tabs
-vim.opt.tabstop = 2 -- Number of spaces a tab represents
-vim.opt.shiftwidth = 2 -- Number of spaces for auto-indentation
-vim.opt.softtabstop = 2 -- Number of spaces a tab counts for in insert mode
--- Clear highlights on search when pressing <Esc> in normal mode
+
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'r',
+  callback = function()
+    vim.bo.shiftwidth = 2
+    vim.bo.tabstop = 2
+    vim.bo.expandtab = true
+  end,
+})
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -451,6 +463,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>sg', builtin.git_files, { desc = '[S]earch [G]it Files' })
+      vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic in float' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -656,6 +669,8 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
 
+        r_language_server = {},
+
         clangd = {
           cmd = {
             'clangd',
@@ -664,7 +679,11 @@ require('lazy').setup({
           },
         },
         gopls = {
-          cmd = { 'gopls' },
+          analyses = {
+            unusedparams = true,
+          },
+          staticcheck = true,
+          gofumpt = true,
         },
 
         pyright = {},
@@ -790,11 +809,15 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        typescriptreact = { 'prettier' }, -- Add Prettier for TypeScript React
+        javascriptreact = { 'prettier' }, -- Add Prettier for JavaScript React
         javascript = { 'prettier' }, -- Add Prettier for JavaScript
         typescript = { 'prettier' }, -- Add Prettier for TypeScript
         html = { 'prettier' }, -- Add Prettier for HTML
@@ -923,8 +946,8 @@ require('lazy').setup({
   {
     'catppuccin/nvim',
     name = 'catppuccin', -- Ensure the plugin can be required as "catppuccin"
-    lazy = false, -- Load the plugin eagerly
-    priority = 1000, -- Ensure it's loaded before other plugins
+    -- lazy = false, -- Load the plugin eagerly
+    -- priority = 1000, -- Ensure it's loaded before other plugins
     config = function()
       require('catppuccin').setup {
         flavour = 'mocha', -- latte, frappe, macchiato, mocha
@@ -965,20 +988,84 @@ require('lazy').setup({
         },
       }
       -- Apply the colorscheme after setup
-      vim.cmd.colorscheme 'catppuccin'
+      -- vim.cmd.colorscheme 'catppuccin'
     end,
   },
 
   {
     'folke/tokyonight.nvim',
+    config = function()
+      -- Global options for all TokyoNight themes
+      vim.g.tokyonight_transparent = true
+      vim.g.tokyonight_style = 'night' -- Options: night, storm, day, moon
+
+      require('tokyonight').setup {
+        transparent = true,
+      }
+
+      -- Ensure transparency by clearing background highlight groups
+      vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+      vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
+    end,
   },
-  { 'mellow-theme/mellow.nvim' },
 
   {
-    'cdmill/neomodern.nvim',
+    'ramojus/mellifluous.nvim',
+    config = function()
+      require('mellifluous').setup {
+        -- Add your configuration here
+        styles = {
+          main_keywords = { bold = true },
+        },
+      }
+    end,
+  },
+  {
+    'EdenEast/nightfox.nvim',
+    config = function()
+      require('nightfox').setup {
+        options = {
+          transparent = true, -- Enable transparent background
+          terminal_colors = true, -- Set terminal colors
+          dim_inactive = false, -- Do not dim inactive panes
+          styles = { -- Customize highlight styles
+            comments = 'italic',
+            keywords = 'bold',
+            types = 'italic,bold',
+          },
+          inverse = {
+            match_paren = true, -- Highlight matching parenthesis
+            visual = false, -- Do not inverse visual selection
+            search = true, -- Highlight search results
+          },
+        },
+      }
+    end,
   },
   {
     'rose-pine/neovim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('rose-pine').setup {
+        variant = 'moon',
+        dark_variant = 'moon',
+        transparent_background = false, -- Disable transparency
+      }
+
+      vim.cmd.colorscheme 'rose-pine'
+
+      vim.api.nvim_set_hl(0, 'Normal', { bg = '#000000', fg = 'white' })
+      vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#000000', fg = 'white' }) -- Floating windows
+      vim.api.nvim_set_hl(0, 'FloatBorder', { bg = '#000000', fg = 'white' }) -- Floating window borders
+      vim.api.nvim_set_hl(0, 'Pmenu', { bg = '#000000', fg = 'white' }) -- Pop-up menus
+      vim.api.nvim_set_hl(0, 'PmenuSel', { bg = '#222222', fg = 'white' }) -- Selected item in menu
+      vim.api.nvim_set_hl(0, 'SignColumn', { bg = '#000000' }) -- Sidebar (e.g., Git signs)
+      vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = '#000000', fg = 'white' }) -- Telescope popups
+      vim.api.nvim_set_hl(0, 'TelescopeBorder', { bg = '#000000', fg = 'white' }) -- Telescope borders
+      vim.api.nvim_set_hl(0, 'LspFloatWinNormal', { bg = '#000000', fg = 'white' }) -- LSP hover popups
+      vim.api.nvim_set_hl(0, 'LspFloatWinBorder', { bg = '#000000', fg = 'white' }) -- LSP popup borders
+    end,
   },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -1083,6 +1170,7 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   -- { import = 'custom.plugins' },
   -- { import = 'custom.themes' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
